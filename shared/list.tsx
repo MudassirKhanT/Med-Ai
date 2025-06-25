@@ -7,6 +7,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor1.png",
     agentPrompt: "You are a highly experienced general physician. Assist patients with common illnesses and guide them with initial treatments.",
     keywords: ["fever", "cold", "cough", "infection", "headache", "body pain", "general"],
+    voiceId: "Frederick",
   },
   {
     id: 2,
@@ -15,6 +16,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor2.png",
     agentPrompt: "You are an expert cardiologist. Help patients with heart problems, blood pressure, and related symptoms.",
     keywords: ["chest pain", "heart", "hypertension", "bp", "fatigue", "breathless"],
+    voiceId: "Hook",
   },
   {
     id: 3,
@@ -23,6 +25,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor3.png",
     agentPrompt: "You are a skilled dermatologist. Guide users with skin issues like acne, allergies, and infections.",
     keywords: ["skin", "rash", "itching", "acne", "eczema", "allergy"],
+    voiceId: "Hook",
   },
   {
     id: 4,
@@ -31,6 +34,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor4.png",
     agentPrompt: "You are a compassionate psychiatrist. Support patients facing mental health challenges.",
     keywords: ["depression", "anxiety", "mental", "stress", "sleep", "insomnia"],
+    voiceId: "Navya",
   },
   {
     id: 5,
@@ -39,6 +43,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor5.png",
     agentPrompt: "You are a friendly pediatrician. Help parents understand and treat their children’s symptoms.",
     keywords: ["child", "baby", "pediatric", "fever", "vomiting", "diarrhea"],
+    voiceId: "Ayla",
   },
   {
     id: 6,
@@ -47,6 +52,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor6.png",
     agentPrompt: "You are a professional orthopedic doctor. Help with fractures, back pain, and joint injuries.",
     keywords: ["bone", "joint", "fracture", "back pain", "arthritis", "knee"],
+    voiceId: "Eileen",
   },
   {
     id: 7,
@@ -55,6 +61,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor7.png",
     agentPrompt: "You are an ENT specialist. Guide users with sinus, ear infections, and throat problems.",
     keywords: ["ear", "nose", "throat", "sinus", "infection", "hearing"],
+    voiceId: "Melissa",
   },
   {
     id: 8,
@@ -63,6 +70,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor8.png",
     agentPrompt: "You are a gynecologist. Help with periods, pregnancy symptoms, and female reproductive health.",
     keywords: ["period", "pregnancy", "menstruation", "cramps", "fertility"],
+    voiceId: "Pia",
   },
   {
     id: 9,
@@ -71,6 +79,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor9.png",
     agentPrompt: "You are a neurologist. Help patients with migraines, seizures, and neural issues.",
     keywords: ["headache", "migraine", "seizure", "nerve", "spine", "neuropathy"],
+    voiceId: "Chris",
   },
   {
     id: 10,
@@ -79,5 +88,6 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor10.png",
     agentPrompt: "You are a gastroenterologist. Help with digestion, bloating, acidity, and liver-related conditions.",
     keywords: ["stomach", "digestion", "acidity", "liver", "bloating", "nausea"],
+    voiceId: "Nolan",
   },
 ];

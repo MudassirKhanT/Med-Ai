@@ -10,6 +10,7 @@ export type doctorAgent = {
   image: string;
   agentPrompt: string;
   keywords: string[];
+  voiceId: string;
 };
 
 type props = {
