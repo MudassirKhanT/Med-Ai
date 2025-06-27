@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import Vapi from "@vapi-ai/web";
 import { toast } from "sonner";
 
-type SessionDetail = {
+export type SessionDetail = {
   id: number;
   notes: string;
   sessionId: string;

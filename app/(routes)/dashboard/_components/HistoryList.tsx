@@ -1,12 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StartConsultationDialog from "./StartConsultationDialog";
-
+import axios from "axios";
+import HistoryTable from "./HistoryTable";
+import { SessionDetail } from "../medical-agent/[sessionId]/page";
 function HistoryList() {
-  const [historyList, setHistoryList] = useState([]);
+  const [historyList, setHistoryList] = useState<SessionDetail[]>([]);
 
+  useEffect(() => {
+    GetHistoryList();
+  }, []);
+  const GetHistoryList = async () => {
+    const result = await axios.get("/api/session-chart?sessionId=all");
+    console.log(result.data);
+    setHistoryList(result.data);
+  };
   return (
     <div className="mt-10">
       {historyList.length === 0 ? (
@@ -18,7 +28,7 @@ function HistoryList() {
           <StartConsultationDialog />
         </div>
       ) : (
-        <div>List</div>
+        <HistoryTable historyList={historyList} />
       )}
     </div>
   );
