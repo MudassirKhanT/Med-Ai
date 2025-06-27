@@ -8,7 +8,7 @@ import Image from "next/image";
 import React from "react";
 import axios from "axios";
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Loader, Loader2Icon } from "lucide-react";
 export type doctorAgent = {
   id: number;

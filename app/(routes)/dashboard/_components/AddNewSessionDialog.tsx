@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -25,9 +26,9 @@ function AddNewSessionDialog() {
   useEffect(() => {
     GetHistoryList();
   }, []);
+
   const GetHistoryList = async () => {
     const result = await axios.get("/api/session-chart?sessionId=all");
-    console.log(result.data);
     setHistoryList(result.data);
   };
 
@@ -37,7 +38,6 @@ function AddNewSessionDialog() {
       notes: note,
     });
 
-    console.log(result.data);
     setSuggestedDoctors(result.data);
     setLoading(false);
   };
@@ -47,34 +47,34 @@ function AddNewSessionDialog() {
 
     const result = await axios.post("/api/session-chart", {
       notes: note,
-      selectedDoctor: selectedDoctor,
+      selectedDoctor,
     });
 
-    console.log(result.data.sessionId);
     router.push("/dashboard/medical-agent/" + result.data.sessionId);
     setLoading(false);
   };
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button className="mt-3" disabled={!paidUser && historyList.length >= 1}>
           + Start a Consultation
         </Button>
       </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Basic Details</DialogTitle>
           <DialogDescription asChild>
             {!suggestedDoctors.length ? (
               <div>
-                <h2>Add Symptoms or Any Other Details</h2>
-                <Textarea placeholder="Add Detail here..." className="h-[200px] mt-1" onChange={(e) => setNote(e.target.value)} />
+                <h2 className="mb-1">Add Symptoms or Any Other Details</h2>
+                <Textarea placeholder="Add detail here..." className="h-[200px] mt-1" onChange={(e) => setNote(e.target.value)} />
               </div>
             ) : (
               <div>
-                <h2>Select the doctor</h2>
-                <div className="grid grid-cols-3 gap-5">
+                <h2 className="mb-3">Select the Doctor</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {suggestedDoctors.map((doctor, index) => (
                     <SuggestedDoctorCard
                       doctorAgent={doctor}
@@ -91,18 +91,18 @@ function AddNewSessionDialog() {
         </DialogHeader>
 
         <DialogFooter>
-          <DialogClose>
+          <DialogClose asChild>
             <Button variant={"outline"}>Cancel</Button>
           </DialogClose>
 
           {!suggestedDoctors.length ? (
             <Button disabled={!note || loading} onClick={OnClickNext}>
-              {loading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
+              {loading ? <Loader2 className="animate-spin mr-2" /> : <ArrowRight className="mr-2" />}
               Next
             </Button>
           ) : (
             <Button disabled={loading || !selectedDoctor} onClick={onStartConsultation}>
-              {loading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
+              {loading ? <Loader2 className="animate-spin mr-2" /> : <ArrowRight className="mr-2" />}
               Start Consultation
             </Button>
           )}
