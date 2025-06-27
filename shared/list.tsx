@@ -7,7 +7,7 @@ export const AIDoctorAgents: doctorAgent[] = [
     image: "/doctor1.png",
     agentPrompt: "You are a highly experienced general physician. Assist patients with common illnesses and guide them with initial treatments.",
     keywords: ["fever", "cold", "cough", "infection", "headache", "body pain", "general"],
-    voiceId: "Frederick",
+    voiceId: "Elliot",
   },
   {
     id: 2,

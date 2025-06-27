@@ -1,13 +1,14 @@
 "use client";
 
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { doctorAgent } from "../../_components/DoctorAgentCard";
-import { Circle, PhoneCall, PhoneOff, Slice } from "lucide-react";
+import { Circle, Loader, PhoneCall, PhoneOff, Slice } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Vapi from "@vapi-ai/web";
+import { toast } from "sonner";
 
 type SessionDetail = {
   id: number;
@@ -32,6 +33,7 @@ function MedicalVoiceAgent() {
   const [currentRole, setCurrentRole] = useState<string | null>();
   const [liveTranscript, setLiveTranscript] = useState<string>();
   const [messages, setMessages] = useState<messages[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     if (sessionId) {
@@ -59,30 +61,7 @@ function MedicalVoiceAgent() {
     const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY!);
     setVapiInstance(vapi);
 
-    const VapiAgentConfig = {
-      name: "AI Medical Doctor Voice Agent",
-      firstMessage: "Hi there! I'm your AI Medical Assistant. I'm here to help you with health questions or concerns you might have today.How are you feeling?",
-      transcriber: {
-        provider: "assembly-ai",
-        language: "en",
-      },
-      voice: {
-        provider: "playht",
-        voiceId: sessionDetail?.selectedDoctor?.voiceId,
-      },
-      model: {
-        provider: "openai",
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: sessionDetail?.selectedDoctor?.agentPrompt,
-          },
-        ],
-      },
-    };
-    //@ts-ignore
-    vapi.start(VapiAgentConfig);
+    vapi.start(process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID);
 
     vapi.on("call-start", () => {
       console.log("Call started");
@@ -129,7 +108,8 @@ function MedicalVoiceAgent() {
     });
   };
 
-  const endCall = () => {
+  const endCall = async () => {
+    setLoading(true);
     if (!vapiInstance) return;
 
     try {
@@ -147,8 +127,26 @@ function MedicalVoiceAgent() {
 
     setCallStarted(false);
     setVapiInstance(null);
+    const result = await GenerateReport();
+    console.log("report:", result);
+    setLoading(false);
+    toast.success("Your report is generated");
+    router.replace("/dashboard");
   };
 
+  const GenerateReport = async () => {
+    console.log("sessionDetail:", sessionDetail);
+    console.log("messages:", messages);
+    console.log("sessionId:", sessionId);
+
+    const result = await axios.post("/api/medical-report", {
+      messages: messages,
+      sessionDetail: sessionDetail,
+      sessionId: sessionId,
+    });
+    console.log(result.data);
+    return result.data;
+  };
   return (
     <div className="p-5 border rounded-3xl bg-secondary">
       <div className="flex justify-between items-center">
@@ -180,19 +178,17 @@ function MedicalVoiceAgent() {
           </div>
 
           {!callStarted ? (
-            <Button className="mt-20" onClick={StartCall}>
-              <PhoneCall /> Start Call
+            <Button className="mt-20" onClick={StartCall} disabled={loading}>
+              {loading ? <Loader className="animate-spin" /> : <PhoneCall />} Start Call
             </Button>
           ) : (
-            <Button variant={"destructive"} onClick={endCall}>
+            <Button variant={"destructive"} onClick={endCall} disabled={loading}>
               {" "}
-              <PhoneOff /> Disconnect
+              {loading ? <Loader className="animate-spin" /> : <PhoneOff />} Disconnect
             </Button>
           )}
         </div>
       )}
-
-      {/* 🔽 Add your chatbot or voice agent component here */}
     </div>
   );
 }

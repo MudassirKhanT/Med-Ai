@@ -1,4 +1,4 @@
-// app/api/suggest-doctors/route.tsx
+// // app/api/suggest-doctors/route.tsx
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -58,3 +58,35 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Error suggesting doctor" }, { status: 500 });
   }
 }
+
+// import { NextRequest, NextResponse } from "next/server";
+// import { AIDoctorAgents } from "@/shared/list";
+// import { openai } from "@/config/OpenAiModel";
+// export async function POST(req: NextRequest) {
+//   const { notes } = await req.json();
+
+//   try {
+//     const completion = await openai.chat.completions.create({
+//       model: "google/gemini-2.5-flash-preview-05-20",
+//       messages: [
+//         {
+//           role: "system",
+//           content: JSON.stringify(AIDoctorAgents),
+//         },
+//         {
+//           role: "user",
+//           content: "User Notes/Symptoms: " + notes,
+//         },
+//       ],
+//     });
+
+//     const rawResp = completion.choices[0].message;
+//     //@ts-ignore
+//     const Resp = rawResp.content.trim().replace(/```json|```/g, "");
+//     const JSONResp = JSON.parse(Resp);
+
+//     return NextResponse.json(JSONResp);
+//   } catch (e) {
+//     return NextResponse.json({ error: "Failed to suggest doctor", details: e });
+//   }
+// }
