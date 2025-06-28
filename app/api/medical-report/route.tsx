@@ -73,27 +73,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { sessionId, sessionDetail, messages } = body;
 
-    // ✅ Get the current Clerk user
     const user = await currentUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // ✅ Manually generate a medical report based on messages
-    const report = {
-      sessionId,
-      agent: sessionDetail?.selectedDoctor?.specialist || "General Physician",
-      user: "Anonymous",
-      timestamp: new Date().toISOString(),
-      symptoms: extractSymptoms(messages),
-      duration: "2-3 days",
-      severity: "Moderate",
-      medications: ["Paracetamol"],
-      recommendations: ["Stay hydrated", "Consult a doctor if symptoms persist"],
-      treatment: "Rest and over-the-counter medication",
-      precautions: ["Avoid cold drinks", "Take proper rest", "Monitor temperature regularly"],
-      diagnosis: "Likely viral fever",
-    };
+    // ✅ Generate the report inside this file
+    const report = generateReport(sessionDetail?.selectedDoctor?.specialist, messages);
 
     // ✅ Save to database
     await db.insert(sessionChatTable).values({
@@ -113,9 +99,117 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// ✅ Basic symptom extractor from message texts
-function extractSymptoms(messages: any[]): string[] {
-  const knownSymptoms = ["fever", "cold", "cough", "headache", "body pain", "sore throat"];
+// ✅ Generate report logic
+type Report = {
+  sessionId: string;
+  agent: string;
+  user: string;
+  timestamp: string;
+  symptoms: string[];
+  duration: string;
+  severity: string;
+  medications: string[];
+  recommendations: string[];
+  treatment: string;
+  precautions: string[];
+  diagnosis: string;
+};
+
+function generateReport(specialist: string = "General Physician", messages: any[]): any {
   const text = messages.map((m) => m.text.toLowerCase()).join(" ");
-  return knownSymptoms.filter((symptom) => text.includes(symptom));
+
+  let report: Report = {
+    sessionId: "",
+    agent: specialist,
+    user: "Anonymous",
+    timestamp: new Date().toISOString(),
+    symptoms: [],
+    duration: "2-3 days",
+    severity: "Moderate",
+    diagnosis: "",
+    medications: [],
+    recommendations: [],
+    precautions: [],
+    treatment: "",
+  };
+
+  if (specialist.includes("Dermatologist")) {
+    report.symptoms = extractKeywords(text, ["acne", "rash", "itching", "eczema"]);
+    report.diagnosis = "Possible skin inflammation";
+    report.medications = ["Topical cream"];
+    report.recommendations = ["Use mild soap", "Keep area clean"];
+    report.precautions = ["Avoid scratching"];
+    report.treatment = "Apply prescribed ointment";
+  } else if (specialist.includes("Cardiologist")) {
+    report.symptoms = extractKeywords(text, ["chest pain", "heart", "palpitations", "bp"]);
+    report.diagnosis = "Possible hypertension or angina";
+    report.medications = ["Aspirin"];
+    report.recommendations = ["Monitor blood pressure", "Reduce salt intake"];
+    report.precautions = ["Avoid heavy lifting"];
+    report.treatment = "Lifestyle modifications & follow-up tests";
+  } else if (specialist.includes("Psychiatrist")) {
+    report.symptoms = extractKeywords(text, ["anxiety", "depression", "stress", "sleep"]);
+    report.diagnosis = "Mild anxiety disorder";
+    report.medications = ["SSRIs"];
+    report.recommendations = ["Practice relaxation techniques"];
+    report.precautions = ["Avoid caffeine"];
+    report.treatment = "Counseling and therapy sessions";
+  } else if (specialist.includes("Orthopedic")) {
+    report.symptoms = extractKeywords(text, ["back pain", "joint", "knee", "fracture"]);
+    report.diagnosis = "Possible muscular strain";
+    report.medications = ["Pain reliever"];
+    report.recommendations = ["Use ergonomic chairs"];
+    report.precautions = ["Avoid sudden movements"];
+    report.treatment = "Physical therapy exercises";
+  } else if (specialist.includes("ENT")) {
+    report.symptoms = extractKeywords(text, ["ear", "nose", "throat", "sinus", "hearing"]);
+    report.diagnosis = "Possible sinusitis or throat infection";
+    report.medications = ["Nasal spray"];
+    report.recommendations = ["Steam inhalation"];
+    report.precautions = ["Avoid dusty areas"];
+    report.treatment = "Decongestants & hydration";
+  } else if (specialist.includes("Gynecologist")) {
+    report.symptoms = extractKeywords(text, ["period", "pregnancy", "menstruation", "cramps"]);
+    report.diagnosis = "Normal menstrual symptoms";
+    report.medications = ["Painkillers"];
+    report.recommendations = ["Warm compress on abdomen"];
+    report.precautions = ["Track cycle regularly"];
+    report.treatment = "Symptomatic management";
+  } else if (specialist.includes("Pediatrician")) {
+    report.symptoms = extractKeywords(text, ["child", "baby", "fever", "vomiting", "diarrhea"]);
+    report.diagnosis = "Mild viral infection";
+    report.medications = ["ORS solution"];
+    report.recommendations = ["Monitor hydration"];
+    report.precautions = ["Maintain hygiene"];
+    report.treatment = "Home care & observation";
+  } else if (specialist.includes("Neurologist")) {
+    report.symptoms = extractKeywords(text, ["headache", "migraine", "seizure", "nerve", "spine"]);
+    report.diagnosis = "Possible migraine";
+    report.medications = ["Triptans"];
+    report.recommendations = ["Dark, quiet room rest"];
+    report.precautions = ["Avoid bright lights"];
+    report.treatment = "Medication & lifestyle adjustments";
+  } else if (specialist.includes("Gastroenterologist")) {
+    report.symptoms = extractKeywords(text, ["stomach", "digestion", "acidity", "liver", "bloating"]);
+    report.diagnosis = "Acid reflux / gastritis";
+    report.medications = ["Antacids"];
+    report.recommendations = ["Small frequent meals"];
+    report.precautions = ["Avoid spicy food"];
+    report.treatment = "Diet control & medication";
+  } else {
+    // Default for General Physician
+    report.symptoms = extractKeywords(text, ["fever", "cold", "cough", "headache"]);
+    report.diagnosis = "Likely viral infection";
+    report.medications = ["Paracetamol"];
+    report.recommendations = ["Stay hydrated", "Get adequate rest"];
+    report.precautions = ["Avoid cold drinks"];
+    report.treatment = "OTC medication & home care";
+  }
+
+  return report;
+}
+
+// ✅ Extract matching keywords from text
+function extractKeywords(text: string, keywords: string[]): string[] {
+  return keywords.filter((keyword) => text.includes(keyword));
 }
